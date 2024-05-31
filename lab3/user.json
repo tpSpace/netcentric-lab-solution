@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "password": "admin",
+        "fullname": "Administrator",
+        "email": [
+            "admin@email.com",
+            "ad@email.com"
+        ],
+        "address": [
+            "Jl. Jend. Sudirman",
+            "Jl. Jend. Gatot Subroto"
+        ]
+    }
+]
