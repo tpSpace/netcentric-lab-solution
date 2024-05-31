@@ -1,21 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-// const (
-// 	host     = "aws-0-ap-southeast-1.pooler.supabase.com"
-// 	port     = 5432
-// 	user     = "wywoatbuzdzcwzffnkak"
-// 	password = "dKiCFIm6fsIiZvSM"
-// 	dbname   = "postgres"
-// )
 
 var db *gorm.DB
 var err error
@@ -36,7 +31,19 @@ type User struct {
 }
 
 func main() {
-	dsn := "postgres://postgres.wywoatbuzdzcwzffnkak:dKiCFIm6fsIiZvSM@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Asia/Shanghai",
+		host, user, password, dbname, port)
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
