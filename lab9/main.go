@@ -3,8 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
+
+	"github.com/jaswdr/faker"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -67,6 +72,13 @@ func main() {
 		v1.GET("/users/username/:username", findUserByUsername)
 		v1.GET("/users/firstname/:firstname", findUserByFirstname)
 		v1.GET("/users/lastname/:lastname", findUserByLastname)
+		// create fake data to the database
+		v1.GET("/users/fake/:count", func(c *gin.Context) {
+			count, _ := strconv.Atoi(c.Param("count"))
+			insertData(db, count)
+			c.JSON(http.StatusOK, gin.H{"message": "Fake data created"})
+		})
+
 	}
 
 	// Run the server
@@ -177,4 +189,29 @@ func findUserByLastname(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user)
+}
+
+// INSERT INTO users (username, firstname, lastname, email, avatar, phone, dob, country, city, street, address) VALUES ('john_doe', 'John', 'Doe', '
+func insertData(db *gorm.DB, count int) {
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	for i := 0; i < count; i++ {
+		fake := faker.New()
+		rand.New(rand.NewSource(time.Now().UnixNano()))
+		now := time.Now()
+		user := User{
+			Username:  fake.Person().FirstName() + strconv.Itoa(rand.Intn(1000)),
+			Firstname: fake.Person().FirstName(),
+			Lastname:  fake.Person().LastName(),
+			Email:     fake.Internet().Email(),
+			Avatar:    fake.Internet().URL(),
+			Phone:     fake.Phone().Number(),
+			Dob:       now.Format(time.RFC3339),
+			Country:   fake.Address().Country(),
+			City:      fake.Address().City(),
+			Street:    fake.Address().StreetName(),
+			Address:   fake.Address().Address(),
+		}
+		db.Create(&user)
+	}
 }

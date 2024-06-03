@@ -10,7 +10,7 @@ const broadcastAddress string = "192.168.1.3:1999"
 
 func BoardcastFileInfo(filename string, filesize int64) {
 	for {
-		sendBroadcast(filename, filesize)
+		SendBroadcast(filename, filesize)
 		time.Sleep(10 * time.Second)
 	}
 }
