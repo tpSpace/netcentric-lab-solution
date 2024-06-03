@@ -18,7 +18,6 @@ import (
 )
 
 var db *gorm.DB
-var err error
 
 type User struct {
 	ID        uint   `json:"id" gorm:"primaryKey"`
@@ -61,9 +60,13 @@ func main() {
 	router := gin.Default()
 
 	// Define routes and their handlers
-	// v1
+	// Base URL
+	// localhost:8080/v1/
 	{
 		v1 := router.Group("/v1")
+		v1.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"message": "Welcome to the API"})
+		})
 		v1.POST("/users", createUser)
 		v1.GET("/users", getUsers)
 		v1.GET("/users/:id", getUser)
